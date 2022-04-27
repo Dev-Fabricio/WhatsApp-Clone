@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './ChatWindow.css'
 
 import SearchIcon from '@material-ui/icons//Search';
@@ -21,6 +21,8 @@ export const ChatWindow = ({user}) => {
         recognition = new SpeechRecognition();
     }
 
+    const body = useRef()
+
     const [emojiOpen, setEmojiOpen] = useState(false)
 
     const [text, setText] = useState('')
@@ -34,8 +36,10 @@ export const ChatWindow = ({user}) => {
     ])
 
     useEffect(() => {
-        
-    }, [])
+        if(body.current.scrollHeight > body.current.offsetHeight) {
+            body.current.scrollTop = body.current.scrollHeight - body.current.offsetHeight;
+        }
+    }, [list,])
 
     const handleOpenEmoji = () => {
         setEmojiOpen(true)
@@ -82,7 +86,7 @@ export const ChatWindow = ({user}) => {
                     <div className='chatWindow-btn'><MoreVertIcon style={{color: '#919191'}}/></div>
                 </div>
             </div>
-            <div className='chatWindow-body'>
+            <div className='chatWindow-body' ref={body} >
                 {list.map((item, key) => (
                     <MessageItem 
                         key={key}

@@ -2,8 +2,11 @@ import React, {useState, useEffect} from 'react'
 import './App.css'
 
 import { ChatListItem } from './components/chatListItem/index'
-import { ChatIntro } from './components/chatIntro/index'
 import { ChatWindow } from './components/ChatWindow';
+import { ChatIntro } from './components/chatIntro/index'
+import { NewChat } from './components/NewChat'
+import Login from './components/Login/Login';
+
 
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -11,6 +14,8 @@ import MoreVertIcon from '@material-ui/icons//MoreVert';
 import SearchIcon from '@material-ui/icons//Search';
 
 export default () => {
+  
+  const [user, setUser] = useState()
 
   const [chatList, setChatList] = useState([
     {chatId: 1, title: 'Pessoa 1', image: 'https://fiskvilamedeiros.com.br/wp-content/uploads/2015/04/avatar-1577909_960_720.png'},
@@ -20,15 +25,36 @@ export default () => {
   ])
   const [activeChat, setActiveChat] = useState({})
 
-  const [user, setUser] = useState({
-    id: 1234,
-    avatar: 'https://fiskvilamedeiros.com.br/wp-content/uploads/2015/04/avatar-1577909_960_720.png',
-    name: 'Fabricio'
-  })
+
+  const handleLoginData = async (u) => {
+      let newUser = {
+        id: u.uid,
+        name: u.displayName,
+        avatar: u.photoURL
+      };
+      setUser(newUser)
+      console.log(user)
+  }
+
+  if(user === undefined) {
+    return (<Login onReceive={handleLoginData} />)
+  }
+
+  const [showNewChat, setShowNewChat ] = useState(false)
+
+  const handleNewChat = () => {
+    setShowNewChat(true)
+  }
 
   return (
     <div className='app-window'>
       <div className='sidebar'>
+        <NewChat 
+          chatlist={chatList}
+          user={user}
+          show={showNewChat}
+          setShow={setShowNewChat}
+        />
         <header>
           <img className='header-avatar' src={user.avatar}/>
           <div className='header-buttons'>
@@ -36,7 +62,7 @@ export default () => {
                 <DonutLargeIcon style={{color: '#919191'}} />
             </div>
             <div className='header-btn'>
-                <ChatIcon style={{color: '#919191'}} />
+                <ChatIcon style={{color: '#919191'}} onClick={handleNewChat}/>
             </div>
             <div className='header-btn'>
                 <MoreVertIcon style={{color: '#919191'}} />
